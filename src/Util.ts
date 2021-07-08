@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default class Util {
+export class Util {
     constructor() {
         throw new Error(`Class Util may not be instantiated!`);
     }

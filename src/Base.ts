@@ -1,7 +1,7 @@
 import { EventEmitter } from "events";
 import mongoose, { Connection, ConnectOptions } from 'mongoose';
 
-export default class Base extends EventEmitter {
+export class Base extends EventEmitter {
     public readyAt: Date | undefined;
     public connection: Connection;
     private options: DatabaseOptions;
