@@ -2,8 +2,8 @@
   "name": "dsc.db",
   "version": "1.1.1",
   "description": "A simple package for MongoDB.",
-  "main": "lib/index.js",
-  "types": "lib/index.d.js",
+  "main": "lib/Database.js",
+  "types": "lib/Database.d.js",
   "scripts": {
     "build": "tsc"
   },
