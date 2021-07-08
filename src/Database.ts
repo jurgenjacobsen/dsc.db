@@ -112,7 +112,9 @@ export class Database extends Base {
 
     public async all(limit = 0): Promise<Data[]> {
         if (typeof limit !== "number" || limit < 1) limit = 0;
-        let data = await this.schema.find().catch((e: any) => {});
+        let data = await this.schema.find().catch((e: any) => {
+            this.emit("error", e);
+        });
         if (!!limit) data = data.slice(0, limit);
 
         return data.map((m: any) => ({
