@@ -7,7 +7,6 @@ import Util from './Util';
 
 export class Database extends Base {
     private schema: Model<Document<any, any, any>, any>;
-    
     constructor(options: DatabaseOptions) {
         super(options);
         this.schema = DefaultSchema(this.connection, options.collection);
@@ -99,6 +98,16 @@ export class Database extends Base {
 
     public async fetch(key: string): Promise<any | void | undefined> {
         return this.get(key);
+    }
+
+    public async ensure(key: string): Promise<any> {
+        return new Promise(async (resolve) => {
+            if(typeof this.defaultData === "undefined") throw new Error("DefaultData is invalid, define a real value!");
+            let exists = await this.exists(key);
+            if(exists) return await this.get(key);
+            let data = await this.set(key, this.defaultData);
+            resolve(data);
+        });
     }
 
     public async all(limit = 0): Promise<Data[]> {

@@ -4,6 +4,7 @@ import mongoose, { Connection, ConnectOptions } from 'mongoose';
 export default class Base extends EventEmitter {
     public readyAt: Date | undefined;
     public connection: Connection;
+    public defaultData: any | undefined;
     private options: DatabaseOptions;
 
     constructor(options: DatabaseOptions) {
@@ -12,11 +13,13 @@ export default class Base extends EventEmitter {
         if(!options.mongoURL  || !options.mongoURL.startsWith("mongodb")) throw new Error(`MongoDB URI is invalid!`);
         if(typeof options.mongoURL !== "string") throw new Error(`MongoDB URI expected to be a string, but I received ${typeof options.mongoURL}`);
         if(options.connectionOptions && typeof options.connectionOptions !== "object") throw new Error(`Connection Options expected to be an object, but I received ${typeof options.connectionOptions}`);
-        
+
         this.options = options;
 
+        this.defaultData = options.defaultData;
+
         this.connection = this._create();
-    
+        
         this.connection.on("error", (e) => {
             this.emit("error", e);
         });
