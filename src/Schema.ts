@@ -11,6 +11,6 @@ const Default = new Schema({
     }
 });
 
-export const DefaultSchema = (connection: Connection, name: string) => {
+export default (connection: Connection, name: string) => {
     return connection.model(name, Default);
 }

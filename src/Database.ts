@@ -1,9 +1,9 @@
 import { Document, Model } from 'mongoose';
 import Collection from '@discordjs/collection';
 
-import { Base, DatabaseOptions } from './Base';
-import { DefaultSchema } from './Schema';
-import { Util } from './Util';
+import Base, { DatabaseOptions } from './Base';
+import DefaultSchema from './Schema';
+import Util from './Util';
 
 export class Database extends Base {
     private schema: Model<Document<any, any, any>, any>;
