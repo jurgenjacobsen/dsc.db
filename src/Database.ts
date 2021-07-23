@@ -1,4 +1,4 @@
-import { Document, Model } from 'mongoose';
+import { Document, Model, Schema } from 'mongoose';
 import Collection from '@discordjs/collection';
 
 import Base, { DatabaseOptions } from './Base';
@@ -120,6 +120,10 @@ export class Database extends Base {
         return data.map((m: any) => ({
             ID: m.ID, data: m.data
         }));
+    }
+
+    public async raw(params: any) {
+        return await this.schema.find(params);
     }
 
     public async fetchAll(limit = 0): Promise<DataCollection> {
