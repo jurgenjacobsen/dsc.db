@@ -103,10 +103,13 @@ export class Database extends Base {
     public async ensure(key: string): Promise<any> {
         return new Promise(async (resolve) => {
             if(typeof this.defaultData === "undefined") throw new Error("DefaultData is invalid, define a real value!");
-            let exists = await this.exists(key);
-            if(exists) resolve(await this.get(key));
-            let data = await this.set(key, this.defaultData);
-            resolve(data);
+            let exists = await this.get(key);
+            if(exists) {
+                resolve(exists);
+            } else {
+                let data = await this.set(key, this.defaultData);
+                resolve(data);
+            }
         });
     }
 
