@@ -1,6 +1,6 @@
 {
   "name": "dsc.db",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A simple package for MongoDB.",
   "main": "lib/Database.js",
   "types": "lib/Database.d.ts",
