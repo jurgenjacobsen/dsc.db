@@ -7,9 +7,10 @@ export class Base {
   public connection: Connection;
   public schema: Model<any, any, any>;
   constructor(options: Options) {
+    
     this.options = options;
     this.connection = this._connect();
-    this.schema = this.connection.model(this.options.collection, DefaultSchema);
+    this.schema = this.connection.model(this.options.collection, DefaultSchema, this.options.collection);
   }
 
   get state(): ReadyState {
