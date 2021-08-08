@@ -40,6 +40,8 @@ export default class Base extends EventEmitter {
             useNewUrlParser: true,
             useUnifiedTopology: true,
             useFindAndModify: false,
+            pass: this.options.mongoPass,
+            user: this.options.mongoUser,
         });
     }
 
@@ -101,6 +103,8 @@ export default class Base extends EventEmitter {
 export interface DatabaseOptions {
     collection: string,
     mongoURL: string;
+    mongoUser: string;
+    mongoPass: string;
     connectionOptions?: ConnectOptions,
     /* Used for the ensure method */
     defaultData?: any,
