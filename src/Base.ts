@@ -1,111 +1,50 @@
-import { EventEmitter } from "events";
-import mongoose, { Connection, ConnectOptions } from 'mongoose';
+import mongoose, { Connection, Model } from "mongoose";
+import { Options } from "./Database";
+import { DefaultSchema } from "./Schema";
 
-export default class Base extends EventEmitter {
-    public readyAt: Date | undefined;
-    public connection: Connection;
-    public defaultData: any | undefined;
-    private options: DatabaseOptions;
+export class Base {
+  public options: Options;
+  public connection: Connection;
+  public schema: Model<any, any, any>;
+  constructor(options: Options) {
+    this.options = options;
+    this.connection = this._connect();
+    this.schema = this.connection.model(this.options.collection, DefaultSchema);
+  }
 
-    constructor(options: DatabaseOptions) {
-        super();
-        if(!options.collection || typeof options.collection !== "string") throw new Error("Collection name should be a string!");
-        if(!options.mongoURL  || !options.mongoURL.startsWith("mongodb")) throw new Error(`MongoDB URI is invalid!`);
-        if(typeof options.mongoURL !== "string") throw new Error(`MongoDB URI expected to be a string, but I received ${typeof options.mongoURL}`);
-        if(options.connectionOptions && typeof options.connectionOptions !== "object") throw new Error(`Connection Options expected to be an object, but I received ${typeof options.connectionOptions}`);
+  get state(): ReadyState {
+    if(typeof this.connection?.readyState !== 'number') return "DISCONNECTED";
 
-        this.options = options;
-
-        this.defaultData = options.defaultData;
-
-        this.connection = this._create();
-        
-        this.connection.on("error", (e) => {
-            this.emit("error", e);
-        });
-
-        this.connection.on("open", () => {
-            this.readyAt = new Date();
-            this.emit("ready");
-        });
+    switch(this.connection.readyState) {
+      case 0:
+        return "DISCONNECTED";
+        case 1:
+          return "CONNECTED";
+        case 2:
+          return "CONNECTING";
+        case 3:
+          return "DISCONNECTING";
     }
+  };
 
-    private _create() {
-        this.emit("debug", "Creating database connection...");
+  private _connect(): Connection {
+    if(typeof this.options.mongoURL !== 'string') throw new Error(`A mongoURL wasn't provided properly.`);
+    if(typeof this.options.mongoUser !== 'string') throw new Error(`A mongoUser wasn't provided properly.`);
+    if(typeof this.options.mongoPass !== 'string') throw new Error(`A mongoPass wasn't provided properly.`);
+  
+    return mongoose.createConnection(this.options.mongoURL, {
+      ...this.options.connectionOptions,
+      pass: this.options.mongoPass,
+      user: this.options.mongoUser,
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+      useFindAndModify: false,
+    });
+  };
 
-        if(!this.options.mongoURL || typeof this.options.mongoURL !== "string") throw new Error(`Invalid MongoURL provided!`);
-        
-        return mongoose.createConnection(this.options.mongoURL, {
-            ...this.options.connectionOptions,
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-            useFindAndModify: false,
-            pass: this.options.mongoPass,
-            user: this.options.mongoUser,
-        });
-    }
-
-    private _destroyDatabase(): void {
-        this.connection.close();
-        this.readyAt = undefined;
-        this.emit("debug", "Database disconnected");
-    }
-
-    get url(): string {
-        return this.options.mongoURL;
-    }
-
-    get state() {
-        if (!this.connection || typeof this.connection.readyState !== "number") return "DISCONNECTED";
-        switch(this.connection.readyState) {
-            case 0:
-                return "DISCONNECTED";
-            case 1:
-                return "CONNECTED";
-            case 2:
-                return "CONNECTING";
-            case 3:
-                return "DISCONNECTING";
-        }    
-    }
-
-    /**
-    * Emitted when database creates connection
-    * @event Base#ready
-    * @example db.on("ready", () => {
-    *     console.log("Successfully connected to the database!");
-    * });
-    */
-
-    /**
-    * Emitted when database encounters error
-    * @event Base#error
-    * @param {Error} Error Error Message
-    * @example db.on("error", console.error);
-    */
-
-    /**
-    * Emitted on debug mode
-    * @event Base#debug
-    * @param {string} Message Debug message
-    * @example db.on("debug", console.log);
-    */
-
-    /**
-    * Emitted on debug mode
-    * @event Base#change
-    * @param {string} Message Debug message
-    * @example db.on("debug", console.log);
-    */
-
+  private _close(): void {
+    this.connection.close();
+  }
 }
 
-export interface DatabaseOptions {
-    collection: string,
-    mongoURL: string;
-    mongoUser: string;
-    mongoPass: string;
-    connectionOptions?: ConnectOptions,
-    /* Used for the ensure method */
-    defaultData?: any,
-}
+export type ReadyState = 'DISCONNECTED' | 'CONNECTED' | 'CONNECTING' | 'DISCONNECTING' | undefined;
