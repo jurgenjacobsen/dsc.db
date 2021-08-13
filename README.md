@@ -14,3 +14,5 @@ npm i dsc.db
 ```
 
 > *Recomended Node.js 16.6.0*
+
+### [Documentation](https://github.com/jurgenjacobsen/dsc.db/wiki/Documentation)
