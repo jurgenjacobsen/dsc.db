@@ -6,7 +6,7 @@ export class Util {
   constructor() {
     throw new Error(`Class Util may not be instantiated!`);
   }
-
+  
   static parseFilter(query: FilterQuery<Data> | string): FilterQuery<Data> {
     return typeof query === 'object' ? query : { id: query };
   }

@@ -8,6 +8,12 @@ export class Database extends Base {
     super(options);
   }
 
+  
+  /**
+   * Fetches data from the database
+   * @param  {FilterQuery<Data>|string} query
+   * @returns Promise<Data | null>
+   */
   public fetch(query: FilterQuery<Data> | string): Promise<Data | null> {
     return new Promise(async (resolve) => {
       if (!['object', 'string'].includes(typeof query)) return resolve(null);
@@ -17,7 +23,12 @@ export class Database extends Base {
       return resolve(raw);
     });
   }
-
+  /**
+   * Sets a certain key on the database
+   * @param  {string} key
+   * @param  {any} value
+   * @returns Promise<Data>
+   */
   public set(key: string, value: any): Promise<Data> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
@@ -57,8 +68,16 @@ export class Database extends Base {
     });
   }
 
+  
+  /**
+   * Pushs a value into an array
+   * @param  {string} key
+   * @param  {any} value
+   * @returns Promise<Data | null>
+   */
   public push(key: string, value: any): Promise<Data | null> {
     return new Promise(async (resolve) => {
+      if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
       let data = await this.get(key);
       if (!data) throw new Error('Key not found!');
 
@@ -68,15 +87,30 @@ export class Database extends Base {
       return resolve(await this.set(key, data));
     });
   }
-
+  /**
+   * Check if a certain key exists in the database
+   * @param  {string} id
+   * @returns Promise<boolean>
+   */
   public has(id: string): Promise<boolean> {
     return new Promise(async (resolve) => {
+      if (typeof id !== 'string') throw new Error('ID should be type string, received:' + typeof id);
       return resolve((await this.fetch(id)) ? true : false);
     });
   }
 
-  public pull(key: string, value: any, multiple = false): Promise<Data | null> {
+  
+  /**
+   * Pull a certain value from an array
+   * @param  {string} key
+   * @param  {any} value
+   * @param  {boolean} multiple
+   * @returns Promise<Data | null>
+   */
+  public pull(key: string, value: any, multiple: boolean = false): Promise<Data | null> {
     return new Promise(async (resolve) => {
+      if(typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
+      if(typeof multiple !== 'boolean') throw new Error('Multiple should be type boolean, received:' + typeof multiple);
       let data = await this.get(key);
       if (!data) return resolve(null);
 
@@ -97,6 +131,10 @@ export class Database extends Base {
     });
   }
 
+  /**
+   * Fetches the entire database
+   * @returns Promise<Data[] | null>
+   */
   public list(): Promise<Data[] | null> {
     return new Promise(async (resolve) => {
       let data = await this.schema.find().catch((err: Error) => {
@@ -107,8 +145,15 @@ export class Database extends Base {
     });
   }
 
+  
+  /**
+   * Ensure that the key exists, if not, it will be set to the 'Options.default' value
+   * @param  {string} id
+   * @returns Promise<Data>
+   */
   public ensure(id: string): Promise<Data> {
     return new Promise(async (resolve) => {
+      if (typeof id !== 'string') throw new Error('ID should be type string, received:' + typeof id);
       if (!this.options.default) throw new Error("Default data isn't defined, to use this method you should define one value in the options");
       let raw = await this.fetch(id);
       if (raw) {
@@ -118,7 +163,12 @@ export class Database extends Base {
       }
     });
   }
-
+  
+  /**
+   * Deletes a key from the database
+   * @param  {FilterQuery<Data>|string} query
+   * @returns Promise<Data | null>
+   */
   public delete(query: FilterQuery<Data> | string): Promise<Data | null> {
     return new Promise(async (resolve) => {
       let filter = Util.parseFilter(query);
@@ -130,21 +180,39 @@ export class Database extends Base {
     });
   }
 
-  public add(key: string, value: number): Promise<Data | null> {
+  /**
+   * Adds an amount into a certain key
+   * @param  {string} key
+   * @param  {number} amount
+   * @returns Promise<Data | null>
+   */
+  public add(key: string, amount: number): Promise<Data | null> {
     return new Promise(async (resolve) => {
-      return resolve(await this.__math(key, '+', value));
+      return resolve(await this.__math(key, '+', amount));
     });
   }
 
-  public async subtract(key: string, value: number): Promise<Data | null> {
+  /**
+   * Substracts an amount from a the key
+   * @param  {string} key
+   * @param  {number} amount
+   * @returns Promise<Data | null>
+   */
+  public async subtract(key: string, amount: number): Promise<Data | null> {
     return new Promise(async (resolve) => {
-      return resolve(await this.__math(key, '-', value));
+      return resolve(await this.__math(key, '-', amount));
     });
   }
 
-  public async div(key: string, value: number): Promise<Data | null> {
+  /**
+   * Divide a key number by an amount
+   * @param  {string} key
+   * @param  {number} amount
+   * @returns Promise<Data | null>
+   */
+  public async div(key: string, amount: number): Promise<Data | null> {
     return new Promise(async (resolve) => {
-      return resolve(await this.__math(key, '/', value));
+      return resolve(await this.__math(key, '/', amount));
     });
   }
 
