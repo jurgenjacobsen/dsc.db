@@ -8,7 +8,6 @@ export class Database extends Base {
     super(options);
   }
 
-  
   /**
    * Fetches data from the database
    * @param  {FilterQuery<Data>|string} query
@@ -68,7 +67,6 @@ export class Database extends Base {
     });
   }
 
-  
   /**
    * Pushs a value into an array
    * @param  {string} key
@@ -99,7 +97,6 @@ export class Database extends Base {
     });
   }
 
-  
   /**
    * Pull a certain value from an array
    * @param  {string} key
@@ -109,8 +106,8 @@ export class Database extends Base {
    */
   public pull(key: string, value: any, multiple: boolean = false): Promise<Data | null> {
     return new Promise(async (resolve) => {
-      if(typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
-      if(typeof multiple !== 'boolean') throw new Error('Multiple should be type boolean, received:' + typeof multiple);
+      if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
+      if (typeof multiple !== 'boolean') throw new Error('Multiple should be type boolean, received:' + typeof multiple);
       let data = await this.get(key);
       if (!data) return resolve(null);
 
@@ -145,7 +142,6 @@ export class Database extends Base {
     });
   }
 
-  
   /**
    * Ensure that the key exists, if not, it will be set to the 'Options.default' value
    * @param  {string} id
@@ -163,7 +159,7 @@ export class Database extends Base {
       }
     });
   }
-  
+
   /**
    * Deletes a key from the database
    * @param  {FilterQuery<Data>|string} query
