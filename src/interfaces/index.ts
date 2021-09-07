@@ -15,7 +15,7 @@ export interface Options {
 
 export interface Data<T> extends Document {
   id: string;
-  data: T | any;
+  data: T;
 }
 
 export interface ParsedKey {
