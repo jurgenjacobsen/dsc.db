@@ -7,7 +7,7 @@ export class Util {
     throw new Error(`Class Util may not be instantiated!`);
   }
 
-  static parseFilter(query: FilterQuery<Data> | string): FilterQuery<Data> {
+  static parseFilter(query: FilterQuery<Data<any>> | string): FilterQuery<Data<any>> {
     return typeof query === 'object' ? query : { id: query };
   }
 

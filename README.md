@@ -13,4 +13,4 @@ A MongoDB wrapper for your Javascript and Typescript projects.
 npm i dsc.db
 ```
 
-### [Documentation](https://github.com/jurgenjacobsen/dsc.db/wiki/Documentation)
+### [Documentation](https://docs.dema.city/dsc.db)

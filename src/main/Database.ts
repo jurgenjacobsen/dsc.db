@@ -3,7 +3,7 @@ import { Data, Options } from '../interfaces';
 import { Base } from './Base';
 import { Util } from '../utils/Util';
 
-export class Database extends Base {
+export class Database<T> extends Base {
   constructor(options: Options) {
     super(options);
   }
@@ -13,7 +13,7 @@ export class Database extends Base {
    * @param  {FilterQuery<Data>|string} query
    * @returns Promise<Data | null>
    */
-  public fetch(query: FilterQuery<Data> | string): Promise<Data | null> {
+  public fetch(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       if (!['object', 'string'].includes(typeof query)) return resolve(null);
       let filter = Util.parseFilter(query);
@@ -28,7 +28,7 @@ export class Database extends Base {
    * @param  {any} value
    * @returns Promise<Data>
    */
-  public set(key: string, value: any): Promise<Data> {
+  public set(key: string, value: any): Promise<Data<T>> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
       let parsed = Util.parseKey(key);
@@ -73,7 +73,7 @@ export class Database extends Base {
    * @param  {any} value
    * @returns Promise<Data | null>
    */
-  public push(key: string, value: any): Promise<Data | null> {
+  public push(key: string, value: any): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
       let data = await this.get(key);
@@ -104,7 +104,7 @@ export class Database extends Base {
    * @param  {boolean} multiple
    * @returns Promise<Data | null>
    */
-  public pull(key: string, value: any, multiple: boolean = false): Promise<Data | null> {
+  public pull(key: string, value: any, multiple: boolean = false): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
       if (typeof multiple !== 'boolean') throw new Error('Multiple should be type boolean, received:' + typeof multiple);
@@ -132,7 +132,7 @@ export class Database extends Base {
    * Fetches the entire database
    * @returns Promise<Data[] | null>
    */
-  public list(): Promise<Data[] | null> {
+  public list(): Promise<Data<T>[] | null> {
     return new Promise(async (resolve) => {
       let data = await this.schema.find().catch((err: Error) => {
         console.log(err);
@@ -147,7 +147,7 @@ export class Database extends Base {
    * @param  {string} id
    * @returns Promise<Data>
    */
-  public ensure(id: string): Promise<Data> {
+  public ensure(id: string): Promise<Data<T>> {
     return new Promise(async (resolve) => {
       if (typeof id !== 'string') throw new Error('ID should be type string, received:' + typeof id);
       if (!this.options.default) throw new Error("Default data isn't defined, to use this method you should define one value in the options");
@@ -165,7 +165,7 @@ export class Database extends Base {
    * @param  {FilterQuery<Data>|string} query
    * @returns Promise<Data | null>
    */
-  public delete(query: FilterQuery<Data> | string): Promise<Data | null> {
+  public delete(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       let filter = Util.parseFilter(query);
       let raw = await this.schema.findOneAndDelete(filter).catch((err: Error) => {
@@ -182,7 +182,7 @@ export class Database extends Base {
    * @param  {number} amount
    * @returns Promise<Data | null>
    */
-  public add(key: string, amount: number): Promise<Data | null> {
+  public add(key: string, amount: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       return resolve(await this.__math(key, '+', amount));
     });
@@ -194,7 +194,7 @@ export class Database extends Base {
    * @param  {number} amount
    * @returns Promise<Data | null>
    */
-  public async subtract(key: string, amount: number): Promise<Data | null> {
+  public async subtract(key: string, amount: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       return resolve(await this.__math(key, '-', amount));
     });
@@ -206,13 +206,13 @@ export class Database extends Base {
    * @param  {number} amount
    * @returns Promise<Data | null>
    */
-  public async div(key: string, amount: number): Promise<Data | null> {
+  public async div(key: string, amount: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       return resolve(await this.__math(key, '/', amount));
     });
   }
 
-  private get(key: string): Promise<Data | any | null> {
+  private get(key: string): Promise<Data<T> | any | null> {
     return new Promise(async (resolve) => {
       let parsed = Util.parseKey(key);
       let get = await this.schema.findOne({ id: parsed.key }).catch((err: Error) => {
@@ -227,7 +227,7 @@ export class Database extends Base {
     });
   }
 
-  private __math(key: string, operator: '+' | '-' | '/', value: number): Promise<Data | null> {
+  private __math(key: string, operator: '+' | '-' | '/', value: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be string, received: ' + typeof key);
       if (!['+', '-', '/'].includes(operator)) throw new Error('Operator not supported');

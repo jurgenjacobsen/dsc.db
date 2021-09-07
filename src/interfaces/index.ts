@@ -13,9 +13,9 @@ export interface Options {
   default?: any;
 }
 
-export interface Data extends Document {
+export interface Data<T> extends Document {
   id: string;
-  data: any;
+  data: T | any;
 }
 
 export interface ParsedKey {

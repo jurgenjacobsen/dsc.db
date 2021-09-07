@@ -5,13 +5,17 @@ import { Data, Options } from '../interfaces';
 export class Base {
   public options: Options;
   public connection: Connection;
-  public schema: Model<Data, any, any>;
+  public schema: Model<Data<any>, any, any>;
+  public readyAt?: Date;
 
   constructor(options: Options) {
     this.options = options;
 
     this.connection = this._connect();
     this.schema = this.connection.model(this.options.collection, Main);
+    this.connection.on('open', () => {
+      this.readyAt = new Date();
+    });
   }
 
   private _connect(): Connection {

@@ -1,13 +1,14 @@
 {
   "name": "dsc.db",
-  "version": "3.0.3",
+  "version": "3.0.4",
   "description": "A complete and easy to use  MongoDB wrapper.",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
+    "tsc": "tsc",
     "docs": "typedoc --theme minimal --out docs src/",
     "pretty": "prettier --config .prettierrc \"./src/**/*.ts\"  \"./lib/**/*.js\" --write",
-    "build": "tsc && npm run pretty && npm run docs"
+    "build": "npm run tsc && npm run pretty && npm run docs"
   },
   "repository": {
     "type": "git",
