@@ -2,10 +2,10 @@ import { Connection, Model, createConnection } from 'mongoose';
 import { Main } from '../schemas/Main';
 import { Data, Options } from '../interfaces';
 
-export class Base {
+export class Base<T> {
   public options: Options;
   public connection: Connection;
-  public schema: Model<Data<any>, any, any>;
+  public schema: Model<Data<T>, any, any>;
   public readyAt?: Date;
 
   constructor(options: Options) {

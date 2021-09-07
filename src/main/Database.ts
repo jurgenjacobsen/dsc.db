@@ -3,7 +3,7 @@ import { Data, Options } from '../interfaces';
 import { Base } from './Base';
 import { Util } from '../utils/Util';
 
-export class Database<T> extends Base {
+export class Database<T> extends Base<T> {
   constructor(options: Options) {
     super(options);
   }
