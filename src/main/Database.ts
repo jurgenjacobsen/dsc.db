@@ -28,7 +28,7 @@ export class Database<T> extends Base<T> {
    * @param  {any} value
    * @returns Promise<Data>
    */
-  public set(key: string, value: any): Promise<Data<T>> {
+  public set(key: string, value: T | any): Promise<Data<T>> {
     return new Promise(async (resolve) => {
       if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
       let parsed = Util.parseKey(key);
