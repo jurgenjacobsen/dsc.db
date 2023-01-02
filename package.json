@@ -1,14 +1,14 @@
 {
   "name": "dsc.db",
-  "version": "3.0.6",
-  "description": "A complete and easy to use  MongoDB wrapper.",
+  "version": "4.0.0",
+  "description": "A MongoDB wrapper to speed up your projects development",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
-    "tsc": "tsc",
-    "docs": "typedoc --theme minimal --out docs src/",
+    "test": "tsc && node test/index.js",
+    "docs": "typedoc --out docs src/",
     "pretty": "prettier --config .prettierrc \"./src/**/*.ts\"  \"./lib/**/*.js\" --write",
-    "build": "npm run tsc && npm run pretty && npm run docs"
+    "build": "tsc && npm run pretty && npm run docs"
   },
   "repository": {
     "type": "git",
@@ -16,29 +16,25 @@
   },
   "keywords": [
     "mongo",
-    "wrapper",
-    "mongodb",
-    "database",
-    "mongoose"
+    "mongoose",
+    "database"
   ],
+  "engines": {
+    "node": ">=18.12.1",
+    "npm": ">=9.2.0"
+  },
   "author": "jurgenjacobsen",
   "license": "Apache-2.0",
   "bugs": {
     "url": "https://github.com/jurgenjacobsen/dsc.db/issues"
   },
   "homepage": "https://github.com/jurgenjacobsen/dsc.db#readme",
-  "engines": {
-    "node": ">=16.6.0",
-    "npm": ">=7.0.0"
-  },
-  "devDependencies": {
-    "@types/lodash": "^4.14.172",
-    "prettier": "^2.3.2",
-    "typedoc": "^0.21.6",
-    "typescript": "^4.3.5"
-  },
   "dependencies": {
     "lodash": "^4.17.21",
-    "mongoose": "^5.13.7"
+    "mongoose": "^6.8.2"
+  },
+  "devDependencies": {
+    "prettier": "^2.8.1",
+    "typedoc": "^0.23.23"
   }
 }

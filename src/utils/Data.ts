@@ -1,10 +1,10 @@
 import { FilterQuery } from 'mongoose';
-import { Data, ParsedKey } from '../interfaces';
+import { Data, ParsedKey } from './Types';
 import { get, set } from 'lodash';
 
-export class Util {
+export class DataUtil {
   constructor() {
-    throw new Error(`Class Util may not be instantiated!`);
+    throw new Error('Class DataUtil should not be instantiated!');
   }
 
   static parseFilter(query: FilterQuery<Data<any>> | string): FilterQuery<Data<any>> {
@@ -13,12 +13,14 @@ export class Util {
 
   static parseKey(key: any): ParsedKey {
     if (!key || typeof key !== 'string') return { key: undefined, target: undefined };
+
     if (key.includes('.')) {
       let spl = key.split('.');
       let parsed = spl.shift();
       let target = spl.join('.');
       return { key: parsed, target };
     }
+
     return { key, target: undefined };
   }
 
