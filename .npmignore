@@ -3,3 +3,6 @@ docs
 .prettierrc
 .vscode
 .env
+.gitignore
+node_modules
+dist

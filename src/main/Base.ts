@@ -12,23 +12,7 @@ export class Base<T> {
     this.connection = this.connect();
     this.schema = this.connection.model(options.collection, Schema);
 
-    this.connection.on('connection', () => {
-      this.debug('Connecting...');
-    });
-
-    this.connection.on('connected', () => {
-      this.debug('Connected');
-    });
-
-    this.connection.on('disconnected', () => {
-      this.debug('Disconnected');
-    });
-
-    this.connection.on('reconnected', () => {
-      this.debug('Reconnected');
-    });
-
-    this.connection.on('error', (err) => {
+    this.connection.watch().on('error', (err) => {
       this.debug('Error: ' + err);
     });
   }
@@ -38,8 +22,6 @@ export class Base<T> {
   }
 
   private connect(): Connection {
-    return createConnection(this.options.uri, {
-      keepAlive: true,
-    });
+    return createConnection(this.options.uri);
   }
 }

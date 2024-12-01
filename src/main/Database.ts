@@ -1,6 +1,6 @@
 import { FilterQuery } from 'mongoose';
 import { DataUtil } from '../utils/Data';
-import { Data, Options } from '../utils/Types';
+import { Data, Options, Errors } from '../utils/Types';
 import { Base } from './Base';
 
 export class Database<T> extends Base<T> {
@@ -8,9 +8,16 @@ export class Database<T> extends Base<T> {
     super(options);
   }
 
+  /**
+   * Fetches raw data from the database
+   * @param {string} query - The query to search for
+   * @returns {Promise<Data<T>>} The raw data from the database
+   * @example
+   * database.fetch('key');
+   */
   public fetch(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
-      if (!['object', 'string'].includes(typeof query)) return resolve(null);
+      if (!['object', 'string'].includes(typeof query)) throw new Error(Errors.FLAGS.TYPE('query', 'object or string', typeof query));
       let filter = DataUtil.parseFilter(query);
       let raw = await this.schema.findOne(filter);
       if (!raw) return resolve(null);
@@ -18,9 +25,18 @@ export class Database<T> extends Base<T> {
     });
   }
 
+  /**
+   * Set/Update/Create data on the database
+   * @param {string} key - The key to set the data
+   * @returns {Promise<Data<T>>} The data response from the database
+   * @example
+   * database.set('key', 'value');
+   * database.set('key', ['value1', 'value2']);
+   * database.set('key.secondKey', { data: 'value' });
+   */
   public set(key: string, value: T | any): Promise<Data<T>> {
     return new Promise(async (resolve) => {
-      if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
       let parsed = DataUtil.parseKey(key);
       let raw = await this.schema.findOne({ id: parsed.key });
 
@@ -57,9 +73,22 @@ export class Database<T> extends Base<T> {
     });
   }
 
+  /**
+   * Pushes data to an array
+   * @param {string} key - The key to push the data
+   * @param {any} value - The value to push
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.push('key', 'value');
+   * database.push('key', ['value1', 'value2']);
+   * database.push('key', { key: 'value' });
+   * database.push('key', [{ key: 'value' }, { key: 'value' }]);
+   * database.push('key', 1);
+   * database.push('key', [1, 2]);
+   */
   public push(key: string, value: any): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
-      if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
       let data = await this.get(key);
       if (!data) throw new Error('Key not found!');
 
@@ -70,16 +99,32 @@ export class Database<T> extends Base<T> {
     });
   }
 
-  public has(id: string): Promise<boolean> {
+  /**
+   * Checks if the data exists
+   * @param {string} key - The key to check
+   * @returns {Promise<boolean>} The data response from the database
+   * @example
+   * database.has('key')
+   */
+  public has(key: string): Promise<boolean> {
     return new Promise(async (resolve) => {
-      if (typeof id !== 'string') throw new Error('ID should be type string, received:' + typeof id);
-      return resolve((await this.fetch(id)) ? true : false);
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
+      return resolve((await this.fetch(key)) ? true : false);
     });
   }
 
+  /**
+   * Pull data from an array
+   * @param {string} key The key to pull the data
+   * @param {any} value The data to pull
+   * @param {boolean} multiple If true, it will pull multiple data with same key from the array
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.pull('key', 'value');
+   */
   public pull(key: string, value: any, multiple: boolean = false): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
-      if (typeof key !== 'string') throw new Error('Key should be type string, received:' + typeof key);
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
       if (typeof multiple !== 'boolean') throw new Error('Multiple should be type boolean, received:' + typeof multiple);
       let data = await this.get(key);
       if (!data) return resolve(null);
@@ -101,6 +146,12 @@ export class Database<T> extends Base<T> {
     });
   }
 
+  /**
+   * Fetches all data from the database as an array
+   * @returns {Promise<Array>} The data response from the database
+   * @example
+   * database.list();
+   */
   public list(): Promise<Data<T>[] | null> {
     return new Promise(async (resolve) => {
       let data = await this.schema.find().catch((err: Error) => {
@@ -119,6 +170,13 @@ export class Database<T> extends Base<T> {
     });
   }
 
+  /**
+   * Deletes data from the database
+   * @param {string} query The query to delete
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.delete('key');
+   */
   public delete(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       let filter = DataUtil.parseFilter(query);
@@ -130,25 +188,64 @@ export class Database<T> extends Base<T> {
     });
   }
 
+  /**
+   * Sum numbers to the key
+   * @param {string} key The key to sum to
+   * @param {number} amount Number to sum
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.add('key', 1);
+   */
   public add(key: string, amount: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
+      if (typeof key !== 'number') throw new Error(Errors.FLAGS.TYPE('amount', 'number', typeof amount));
       return resolve(await this.__math(key, '+', amount));
     });
   }
 
-  public async subtract(key: string, amount: number): Promise<Data<T> | null> {
+  /**
+   * Subtract numbers from the key
+   * @param {string} key The key to subtract fro
+   * @param {number} amount Number to subtract
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.subtract('key', 1);
+   */
+  public subtract(key: string, amount: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
+      if (typeof key !== 'number') throw new Error(Errors.FLAGS.TYPE('amount', 'number', typeof amount));
       return resolve(await this.__math(key, '-', amount));
     });
   }
 
-  public async div(key: string, amount: number): Promise<Data<T> | null> {
+  /**
+   * Divide numbers from the key
+   * @param {string} key The key to divide from
+   * @param {number} divideBy Number to divide the key by
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.div('key', 4);
+   */
+  public div(key: string, divideBy: number): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
-      return resolve(await this.__math(key, '/', amount));
+      if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
+      if (typeof key !== 'number') throw new Error(Errors.FLAGS.TYPE('amount', 'number', typeof divideBy));
+      return resolve(await this.__math(key, '/', divideBy));
     });
   }
 
+  /**
+   * @access private
+   * Get data from the database
+   * @param {string} key The key to get the data
+   * @returns {Promise<Data<T> | null>} The data response from the database
+   * @example
+   * database.get('key');
+   */
   private get(key: string): Promise<Data<T> | any | null> {
+    if (typeof key !== 'string') throw new Error(Errors.FLAGS.TYPE('key', 'string', typeof key));
     return new Promise(async (resolve) => {
       let parsed = DataUtil.parseKey(key);
       let get = await this.schema.findOne({ id: parsed.key }).catch((err: Error) => {

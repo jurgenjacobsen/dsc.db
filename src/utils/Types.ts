@@ -15,3 +15,11 @@ export interface ParsedKey {
   key?: string;
   target?: string;
 }
+
+export const Errors = {
+  FLAGS: {
+    TYPE: (p: string, t: string, r: string) => {
+      return `Incorrect ${p} type used, expected a ${t} and received: ${r}`;
+    },
+  },
+};

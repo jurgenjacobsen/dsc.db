@@ -1,12 +1,12 @@
 {
   "name": "dsc.db",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "A MongoDB wrapper to speed up your projects development",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
   "scripts": {
     "test": "tsc && node test/index.js",
-    "docs": "typedoc --out docs src/",
+    "docs": "typedoc --out docs src/ --plugin typedoc-github-theme",
     "pretty": "prettier --config .prettierrc \"./src/**/*.ts\"  \"./lib/**/*.js\" --write",
     "build": "tsc && npm run pretty && npm run docs"
   },
@@ -20,8 +20,8 @@
     "database"
   ],
   "engines": {
-    "node": ">=18.12.1",
-    "npm": ">=9.2.0"
+    "node": ">=22.11.0",
+    "npm": ">=9.6.0"
   },
   "author": "jurgenjacobsen",
   "license": "Apache-2.0",
@@ -31,10 +31,12 @@
   "homepage": "https://github.com/jurgenjacobsen/dsc.db#readme",
   "dependencies": {
     "lodash": "^4.17.21",
-    "mongoose": "^6.8.2"
+    "mongoose": "^8.8.3"
   },
   "devDependencies": {
+    "@types/lodash": "^4.17.13",
     "prettier": "^2.8.1",
-    "typedoc": "^0.23.23"
+    "typedoc": "^0.27.2",
+    "typedoc-github-theme": "^0.2.0"
   }
 }
