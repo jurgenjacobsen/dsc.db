@@ -20,8 +20,8 @@
     "database"
   ],
   "engines": {
-    "node": ">=22.11.0",
-    "npm": ">=9.6.0"
+    "node": ">=24.11.0",
+    "npm": ">=11.4.1"
   },
   "author": "jurgenjacobsen",
   "license": "Apache-2.0",
@@ -31,12 +31,12 @@
   "homepage": "https://github.com/jurgenjacobsen/dsc.db#readme",
   "dependencies": {
     "lodash": "^4.17.21",
-    "mongoose": "^8.8.3"
+    "mongoose": "^9.0.1"
   },
   "devDependencies": {
-    "@types/lodash": "^4.17.13",
-    "prettier": "^2.8.1",
-    "typedoc": "^0.27.2",
-    "typedoc-github-theme": "^0.2.0"
+    "@types/lodash": "^4.17.21",
+    "prettier": "^3.7.4",
+    "typedoc": "^0.28.15",
+    "typedoc-github-theme": "^0.3.1"
   }
 }

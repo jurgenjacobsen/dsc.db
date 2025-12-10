@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { QueryFilter } from 'mongoose';
 import { Data, ParsedKey } from './Types';
 import { get, set } from 'lodash';
 
@@ -7,7 +7,7 @@ export class DataUtil {
     throw new Error('Class DataUtil should not be instantiated!');
   }
 
-  static parseFilter(query: FilterQuery<Data<any>> | string): FilterQuery<Data<any>> {
+  static parseFilter(query: QueryFilter<Data<any>> | string): QueryFilter<Data<any>> {
     return typeof query === 'object' ? query : { id: query };
   }
 

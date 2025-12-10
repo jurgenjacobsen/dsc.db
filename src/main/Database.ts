@@ -1,4 +1,4 @@
-import { FilterQuery } from 'mongoose';
+import { QueryFilter } from 'mongoose';
 import { DataUtil } from '../utils/Data';
 import { Data, Options, Errors } from '../utils/Types';
 import { Base } from './Base';
@@ -15,7 +15,7 @@ export class Database<T> extends Base<T> {
    * @example
    * database.fetch('key');
    */
-  public fetch(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
+  public fetch(query: QueryFilter<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       if (!['object', 'string'].includes(typeof query)) throw new Error(Errors.FLAGS.TYPE('query', 'object or string', typeof query));
       let filter = DataUtil.parseFilter(query);
@@ -177,7 +177,7 @@ export class Database<T> extends Base<T> {
    * @example
    * database.delete('key');
    */
-  public delete(query: FilterQuery<Data<T>> | string): Promise<Data<T> | null> {
+  public delete(query: QueryFilter<Data<T>> | string): Promise<Data<T> | null> {
     return new Promise(async (resolve) => {
       let filter = DataUtil.parseFilter(query);
       let raw = await this.schema.findOneAndDelete(filter).catch((err: Error) => {
@@ -237,7 +237,7 @@ export class Database<T> extends Base<T> {
   }
 
   /**
-   * @access private
+   * @private
    * Get data from the database
    * @param {string} key The key to get the data
    * @returns {Promise<Data<T> | null>} The data response from the database
